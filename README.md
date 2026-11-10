@@ -20,23 +20,24 @@ Most of my professional work is private, so this profile focuses on side project
 
 ### [Faultora](https://github.com/Malatiel/Faultora)
 
-A self-hosted CLI that tests API reliability claims instead of assuming them: it imports an OpenAPI description, runs a YAML scenario, injects bounded faults and asserts the business invariants that must survive them.
+A self-hosted CLI for testing business invariants across HTTP, Kafka and read-only database queries. Faultora imports OpenAPI and AsyncAPI descriptions and runs YAML scenarios with concurrency, retries and bounded faults. The [latest release](https://github.com/Malatiel/Faultora/releases/latest) includes Linux and Windows CLI archives.
 
-The flagship scenario races two concurrent `create-payment` requests sharing one idempotency key while injected latency widens the race window, then asserts that exactly one payment exists. The end-to-end suite runs the same scenario against a deliberately broken variant of the example API and requires it to fail there, so the test proves it can detect the defect it claims to cover.
+The [payment example](https://github.com/Malatiel/Faultora/blob/v0.12.0/examples/payment-service/scenarios/fault-concurrent-duplicate.yaml) races two `create-payment` requests sharing one idempotency key while injected latency widens the race window. It checks that exactly one payment exists. The end-to-end suite requires the same scenario to fail against a deliberately broken variant of the API.
 
 **Stack:** Java 21, Maven multi-module, Apache HttpClient 5, Jackson, Toxiproxy and JUnit 5.
 
 Engineering highlights:
 
-- Every injected fault carries a hard expiry: rollback runs exactly once, whichever fires first — the stop step, the expiry watchdog on a daemon thread, or the end-of-run sweep in a `finally` block. A crashed or hung scenario cannot leave the environment degraded.
+- Faults have a hard expiry while the Faultora process is running. Faultora reports failed or unconfirmed rollback as a run error. After a process kill, the operator may need to remove leftover Toxiproxy toxics.
 - The built-in provider acts only on Faultora's own outbound requests, so fault injection needs no privileges over the target or its infrastructure; a Toxiproxy provider adds real network faults through the same SPI without changing the scenario format.
-- Injected failures surface as normalized errors prefixed `FAULT_`, so evidence from a fault can never be misread as target behavior.
+- Injected failures carry a `FAULT_` code that distinguishes them from target responses.
 - Reports attribute nodes to fault windows by half-open interval overlap, stating which requests ran while a fault was active without claiming causation.
 - Destination policy resolves DNS and pins the address per request, re-checks every redirect hop, rejects HTTPS-to-HTTP downgrades and strips credentials across origins.
-- Secrets are passed as handles resolved from the environment; they never reach scenario files, reports or diagnostics, and the run journal stores evidence digests rather than raw response bodies.
-- Retry backoff jitter is derived from the run seed, so a failing run replays with the same delays.
-- Reproducibility is scoped honestly: a seed and manifest reproduce the same plan and generated inputs, not bit-identical timing.
-- Reports are self-contained HTML with no CDN, scripts or telemetry, and releases ship checksums, a CycloneDX SBOM and third-party license attribution.
+- Scenarios refer to secret handles that Faultora resolves from the environment. The CLI run journal records evidence digests and omits raw response bodies.
+- The run seed controls generated inputs and retry jitter. Request scheduling and timing can vary between runs.
+- The MCP server returns preparation diagnostics and named assertion outcomes. Starting a run over MCP requires operator approval.
+- An outbound runner for private networks commits run evidence to disk before sending it to the dispatcher.
+- The CLI writes self-contained HTML reports. Releases ship checksums and a CycloneDX SBOM.
 
 ### [Rayline for macOS](https://github.com/Malatiel/rayline-macos)
 
