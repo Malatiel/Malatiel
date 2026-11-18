@@ -20,24 +20,24 @@ Most of my professional work is private, so this profile focuses on side project
 
 ### [Faultora](https://github.com/Malatiel/Faultora)
 
-A self-hosted CLI for testing business invariants across HTTP, Kafka and read-only database queries. Faultora imports OpenAPI and AsyncAPI descriptions and runs YAML scenarios with concurrency, retries and bounded faults. The [latest release](https://github.com/Malatiel/Faultora/releases/latest) includes Linux and Windows CLI archives.
+I build Faultora, a self-hosted Java 21 CLI for checking what happens when
+staging APIs receive concurrent requests, retries, or injected failures.
+The [payment example](https://github.com/Malatiel/Faultora/blob/main/examples/payment-service/scenarios/fault-concurrent-duplicate.yaml)
+sends two requests with one idempotency key and checks that only one payment
+is created.
 
-The [payment example](https://github.com/Malatiel/Faultora/blob/v0.12.0/examples/payment-service/scenarios/fault-concurrent-duplicate.yaml) races two `create-payment` requests sharing one idempotency key while injected latency widens the race window. It checks that exactly one payment exists. The end-to-end suite requires the same scenario to fail against a deliberately broken variant of the API.
+Generate a YAML scenario from OpenAPI, preview it without contacting your
+service, and run it locally or in CI. Faultora checks outcomes across HTTP,
+Kafka, and read-only database queries and saves HTML, JSON, and JUnit reports.
 
-**Stack:** Java 21, Maven multi-module, Apache HttpClient 5, Jackson, Toxiproxy and JUnit 5.
+[Download for Windows or Linux](https://github.com/Malatiel/Faultora/releases/latest) ·
+[First ten minutes](https://github.com/Malatiel/Faultora#first-ten-minutes)
 
-Engineering highlights:
-
-- Faults have a hard expiry while the Faultora process is running. Faultora reports failed or unconfirmed rollback as a run error. After a process kill, the operator may need to remove leftover Toxiproxy toxics.
-- The built-in provider acts only on Faultora's own outbound requests, so fault injection needs no privileges over the target or its infrastructure; a Toxiproxy provider adds real network faults through the same SPI without changing the scenario format.
-- Injected failures carry a `FAULT_` code that distinguishes them from target responses.
-- Reports attribute nodes to fault windows by half-open interval overlap, stating which requests ran while a fault was active without claiming causation.
-- Destination policy resolves DNS and pins the address per request, re-checks every redirect hop, rejects HTTPS-to-HTTP downgrades and strips credentials across origins.
-- Scenarios refer to secret handles that Faultora resolves from the environment. The CLI run journal records evidence digests and omits raw response bodies.
-- The run seed controls generated inputs and retry jitter. Request scheduling and timing can vary between runs.
-- The MCP server returns preparation diagnostics and named assertion outcomes. Starting a run over MCP requires operator approval.
-- An outbound runner for private networks commits run evidence to disk before sending it to the dispatcher.
-- The CLI writes self-contained HTML reports. Releases ship checksums and a CycloneDX SBOM.
+**I'm looking for testers.** Try the [HTTP examples](https://github.com/Malatiel/Faultora/blob/main/examples/README.md#run-the-http-examples)
+or bring one staging API.
+If setup stalls, a report is unclear, or a check is missing,
+[tell me what happened](https://github.com/Malatiel/Faultora/issues/new/choose).
+The Faultora version, your OS, and a small sanitized example are enough to start.
 
 ### [Rayline for macOS](https://github.com/Malatiel/rayline-macos)
 
