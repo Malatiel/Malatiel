@@ -20,24 +20,27 @@ Most of my professional work is private, so this profile focuses on side project
 
 ### [Faultora](https://github.com/Malatiel/Faultora)
 
-I build Faultora, a self-hosted Java 21 CLI for checking what happens when
-staging APIs receive concurrent requests, retries, or injected failures.
-The [payment example](https://github.com/Malatiel/Faultora/blob/main/examples/payment-service/scenarios/fault-concurrent-duplicate.yaml)
-sends two requests with one idempotency key and checks that only one payment
-is created.
+Faultora is a self-hosted reliability testing platform for APIs and distributed
+systems. Run checks against staging or in CI to see whether your service keeps
+its promises when requests overlap, clients retry, or dependencies fail. In
+the [payment scenario](https://github.com/Malatiel/Faultora/blob/main/examples/payment-service/scenarios/fault-concurrent-duplicate.yaml),
+two requests with one idempotency key must create exactly one payment.
 
-Generate a YAML scenario from OpenAPI, preview it without contacting your
-service, and run it locally or in CI. Faultora checks outcomes across HTTP,
-Kafka, and read-only database queries and saves HTML, JSON, and JUnit reports.
+Start from an OpenAPI contract, generate a YAML scenario, and preview it
+without sending requests. Add parallel steps, retries, or bounded fault
+injection. Inspect the results in an offline HTML report or use JSON and
+JUnit output in CI.
 
-[Download for Windows or Linux](https://github.com/Malatiel/Faultora/releases/latest) ·
-[First ten minutes](https://github.com/Malatiel/Faultora#first-ten-minutes)
+- **Verify a workflow across components.** Exercise HTTP and Kafka and check
+  the resulting state with read-only SQL queries.
+- **Draft scenarios with an AI assistant.** Connect your MCP client to
+  Faultora's local server to draft, validate, and preview scenario YAML.
+- **Run checks inside a private network.** Deploy the separate runner with a
+  compatible dispatcher.
 
-**I'm looking for testers.** Try the [HTTP examples](https://github.com/Malatiel/Faultora/blob/main/examples/README.md#run-the-http-examples)
-or bring one staging API.
-If setup stalls, a report is unclear, or a check is missing,
-[tell me what happened](https://github.com/Malatiel/Faultora/issues/new/choose).
-The Faultora version, your OS, and a small sanitized example are enough to start.
+[Download Faultora](https://github.com/Malatiel/Faultora/releases/latest) ·
+[Run a check against your API](https://github.com/Malatiel/Faultora#first-ten-minutes) ·
+[Run the payment example](https://github.com/Malatiel/Faultora/blob/main/examples/README.md#run-the-http-examples)
 
 ### [Rayline for macOS](https://github.com/Malatiel/rayline-macos)
 
